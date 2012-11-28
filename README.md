@@ -11,6 +11,13 @@ Inline option selection for HTML Text Inputs, auto-complete after a token.
   $('textarea').sew({values: values}); // pass in the values
 ```
 
+There're some required scripts that should be placed on the following order
+```html
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.caretposition.js"></script>
+<script type="text/javascript" src="jquery.sew.js"></script>
+```
+
 ### Customization
 
 - Elements classes are: `-sew-list-container, -sew-list, -sew-list-item, -sew-list-item, -sew-list-item.selected´
