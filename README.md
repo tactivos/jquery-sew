@@ -5,9 +5,12 @@ Inline option selection for HTML Text Inputs, auto-complete after a token.
 ![](http://upload.mural.ly/santiagomontero/1354142421637.blob)
 
 ### Usage
+
+``` javascript
   var values = [{val: 'foo', meta: 'extended foo'}]; // meta is extended search field
   $('textarea').sew({values: values}); // pass in the values
-  
+```
+
 ### Customization
 
 - Elements classes are: `-sew-list-container, -sew-list, -sew-list-item, -sew-list-item, -sew-list-item.selected´
