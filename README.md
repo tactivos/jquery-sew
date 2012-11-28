@@ -1,6 +1,6 @@
 ### What is it?
 
-Inline option selection for HTML Text Inputs, auto-complete after a token.
+Inline option selection for HTML Text Inputs, auto-complete after a token. [Try it live!](http://mrl.li/jquery-sew-demo)
 
 ![](http://upload.mural.ly/santiagomontero/1354142421637.blob)
 
