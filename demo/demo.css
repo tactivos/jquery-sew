@@ -4,6 +4,10 @@ body {
 	color: #333;
 }
 
+h3 {
+	color: #8f8f8f;
+}
+
 .-sew-list-container {
 	background: white;
 	border: 1px solid #DDD;
@@ -21,7 +25,7 @@ body {
 .-sew-list-item {
 	display: block;
 	padding: 5px 10px;
-	border-bottom: 1px solid #DDD;	
+	border-bottom: 1px solid #DDD;
 }
 
 
