@@ -15,14 +15,15 @@
 					<h5> Supports unique elements </h5>
 					<input type="text" style="width:415px; resize:none;" />
 
-
 					<h5> Supports content editable elements</h5>
 					<div class="editable" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
+
+					<h5> Prevent repetition </h5>
+					<div class="editable-repeat" contentEditable="true" style="width: 415px; height: 100px; border: 1px solid #888"></div>
 				</div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="../jquery.caretposition.js"></script>
-        <script type="text/javascript" src="../rangy-core.js"></script>
 				<script type="text/javascript" src="../jquery.sew.js"></script>
 		<script>
 			$(document).ready(function() {
@@ -55,6 +56,8 @@
 				$('input').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
 
 				$('.editable').sew({unique: true, values: repeatedElements, elementFactory: elementFactory});
+				$('.editable-repeat').sew({repeat: false, unique: true, values: repeatedElements, elementFactory: elementFactory});
+				$('.editable-position').sew({repeat: false, unique: true, values: values, elementFactory: elementFactory});
 			});
 		</script>
     </body>

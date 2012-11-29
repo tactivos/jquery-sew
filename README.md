@@ -51,5 +51,9 @@ restored escape support, item shows pointer cursor, tab-autocompletion, no eleme
 
 - [v0.0.3] add new options `{unique: (true|false)}` for removing duplicates, spacing bugs.
 
+- [v0.0.4] added support for content editable
+
+- [v0.0.5] prevent repetition
+
 ### Meta
 Originally written by @leChanteaux (santiago at mural.ly) - maintained by Mural.ly Dev Team (dev at mural.ly)

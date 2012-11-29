@@ -16,7 +16,8 @@
 			token: '@',
 			elementFactory: elementFactory,
 			values: [],
-			unique: false
+			unique: false,
+			repeat: true
 		};
 
 	function Plugin(element, options) {
@@ -153,10 +154,19 @@
 
 		this.lastFilter = val;
 		this.$itemList.find(".-sew-list-item").remove();
+		var values = this.options.values;
 
-		var vals = this.filtered = this.options.values.filter(function (e) {
-			return val === "" || e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 || (e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
-		});
+
+		var vals = this.filtered = values.filter(function (e) {
+			var exp = new RegExp('\\W*' + this.options.token + e.val + '(\\W|$)');
+			if(!this.options.repeat && this.getText().match(exp)) {
+				return false;
+			}
+
+			return	val === "" ||
+							e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
+							(e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
+		}.bind(this));
 
 		if(vals.length) {
 			this.renderElements(vals);
@@ -189,7 +199,7 @@
 			// poors man sanitization
 			text = $("<span>").text(text).html().replace(/\s/g, '&nbsp');
 			this.$element.html(text);
-		};
+		}
 	};
 
 	Plugin.prototype.onKeyUp = function (e) {
