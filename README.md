@@ -20,7 +20,7 @@ There're some required scripts that should be placed on the following order
 
 ### Customization
 
-- Elements classes are: `-sew-list-container, -sew-list, -sew-list-item, -sew-list-item, -sew-list-item.selected´
+- Elements classes are: `-sew-list-container`, `-sew-list`, `-sew-list-item`, `-sew-list-item.selected`
 - You can customize the token (default is the @) by passing the `{token: ':'}`
 - You can customize how elements are created by passing an `elementFactory`
   
