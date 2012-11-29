@@ -49,5 +49,7 @@ There're some required scripts that should be placed on the following order
 - [v0.0.2] `{meta: }` is now optional, on blur it shows a fadeOut animation, options now scroll,
 restored escape support, item shows pointer cursor, tab-autocompletion, no elements support.
 
+- [v0.0.3] add new options `{unique: (true|false)}` for removing duplicates, spacing bugs.
+
 ### Meta
 Originally written by @leChanteaux (santiago at mural.ly) - maintained by Mural.ly Dev Team (dev at mural.ly)
