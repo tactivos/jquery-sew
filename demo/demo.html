@@ -10,12 +10,12 @@
         <h3>enable auto-complete by typing @ </h3>
         <div>
 					<textarea style="width:415px; resize:none;"></textarea>
+					<input type="text" style="width:415px; resize:none;" />
 				</div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="../jquery.caretposition.js"></script>
-		<script type="text/javascript" src="../jquery.sew.js"></script>
-
+				<script type="text/javascript" src="../jquery.sew.min.js"></script>
 		<script>
 			$(document).ready(function() {
 				var values = [{val:'santiagotactivos', meta:'Santiago Montero'},
@@ -23,18 +23,24 @@
 							  {val:'arielflesler', meta:'Ariel Flesler'},
 							  {val:'rbajales', meta:'Raul Bajales'}];
 
+				for (var i = 0; i < 10; i++) {
+					values.push({val: 'johnnyhalife' + i})
+				};
+
+
 				var customItemTemplate = "<div><span />&nbsp;<small /></div>";
 
 				function elementFactory(element, e) {
 					var template = $(customItemTemplate).find('span')
 															.text('@' + e.val).end()
 												   		.find('small')
-															.text("(" + e.meta + ")").end();
+															.text("(" + (e.meta || e.val) + ")").end();
 					element.append(template);
 				};
 
 				// here is how we use it
 				$('textarea').sew({values: values, elementFactory: elementFactory});
+				$('input').sew({elementFactory: elementFactory});
 			});
 		</script>
     </body>

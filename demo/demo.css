@@ -20,12 +20,15 @@ h3 {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	max-height: 100px;
+	overflow: scroll;
 }
 
 .-sew-list-item {
 	display: block;
 	padding: 5px 10px;
 	border-bottom: 1px solid #DDD;
+	cursor: pointer;
 }
 
 

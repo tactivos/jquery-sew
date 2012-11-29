@@ -13,7 +13,7 @@
 
 	var pluginName = 'sew',
 		document = window.document,
-		defaults = {token: '@', elementFactory: elementFactory};
+		defaults = {token: '@', elementFactory: elementFactory, values: []};
 
 	function Plugin(element, options) {
 		this.element = element;
@@ -36,13 +36,16 @@
 
 	Plugin.ITEM_TEMPLATE = '<li class="-sew-list-item"></li>';
 
-	Plugin.KEYS = [40, 38, 13, 27];
+	Plugin.KEYS = [40, 38, 13, 27, 9];
 
 	Plugin.prototype.init = function() {
-		this.$element.bind('keyup', this.onKeyUp.bind(this))
-					 .bind('keydown', this.onKeyDown.bind(this))
-					 .bind('focus', this.renderElements.bind(this, this.options.values))
-					 .bind('blur', this.remove.bind(this));
+		if(this.options.values.length < 1) return;
+
+		this.$element
+								.bind('keyup', this.onKeyUp.bind(this))
+								.bind('keydown', this.onKeyDown.bind(this))
+								.bind('focus', this.renderElements.bind(this, this.options.values))
+								.bind('blur', this.remove.bind(this));
 	};
 
 	Plugin.prototype.reset = function() {
@@ -69,6 +72,8 @@
 	};
 
 	Plugin.prototype.remove = function() {
+		this.$itemList.fadeOut('slow');
+
 		this.cleanupHandle = window.setTimeout(function(){
 			this.$itemList.remove();
 		}.bind(this), 1000);
@@ -86,7 +91,12 @@
 
 	Plugin.prototype.hightlightItem = function() {
 		this.$itemList.find(".-sew-list-item").removeClass("selected");
-		this.filtered[this.index].element.addClass("selected");
+
+		var container = this.$itemList.find(".-sew-list-item").parent();
+		var element = this.filtered[this.index].element.addClass("selected");
+
+		var scrollPosition = element.position().top;
+		container.scrollTop(container.scrollTop() + scrollPosition);
 	};
 
 	Plugin.prototype.renderElements = function(values) {
@@ -94,13 +104,13 @@
 
 		var container = this.$itemList.find('ul').empty();
 		values.forEach(function(e, i) {
-			var $item = $(Plugin.ITEM_TEMPLATE)
+			var $item = $(Plugin.ITEM_TEMPLATE);
 
 			this.options.elementFactory($item, e);
 
 			e.element = $item.appendTo(container)
-				 			 .bind('click', this.onItemClick.bind(this, e))
-				 			 .bind('mouseover', this.onItemHover.bind(this, i));
+												.bind('click', this.onItemClick.bind(this, e))
+												.bind('mouseover', this.onItemHover.bind(this, i));
 		}.bind(this));
 
 		this.index = 0;
@@ -133,9 +143,9 @@
 		this.$itemList.find(".-sew-list-item").remove();
 
 		var vals = this.filtered = this.options.values.filter(function(e) {
-			return val == ""
-				|| e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0
-				|| e.meta.toLowerCase().indexOf(val.toLowerCase()) >= 0;
+			return	val === "" ||
+							e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
+							(e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
 		});
 
 		if(vals.length) {
@@ -156,7 +166,7 @@
 		} else if(input.createTextRange) {
 			var r = document.selection.createRange().duplicate();
 			r.moveEnd('character', input.value.length);
-			if(r.text == '') pos = input.value.length;
+			if(r.text === '') pos = input.value.length;
 			pos = input.value.lastIndexOf(r.text);
 		}
 
@@ -173,7 +183,7 @@
 			range.moveStart('character', pos);
 			range.select();
 		}
-	}
+	};
 
 	Plugin.prototype.onKeyUp = function(e) {
 		var startpos = this.getSelectionStart();
@@ -203,6 +213,7 @@
 		if(!listVisible || (Plugin.KEYS.indexOf(e.keyCode) < 0)) return;
 
 		switch(e.keyCode) {
+		case 9:
 		case 13:
 			this.select();
 			break;
@@ -213,7 +224,7 @@
 			this.prev();
 			break;
 		case 27:
-			this.hideList();
+			this.$itemList.hide();
 			this.dontFilter = true;
 			break;
 		}
@@ -240,5 +251,5 @@
 				$.data(this, 'plugin_' + pluginName, new Plugin(this, options));
 			}
 		});
-	}
+	};
 }(jQuery, window));
