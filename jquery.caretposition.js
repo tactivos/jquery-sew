@@ -38,7 +38,7 @@ $(function() {
 			var cal = calculator, self = this, element = self[0], elementOffset = self.offset();
 
 			// IE has easy way to get caret offset position
-			if ($.browser.msie) {
+			if ($.browser.msie && $.browser.version <= 9) {
 				// must get focus first
 				element.focus();
 			    var range = document.selection.createRange();
@@ -49,6 +49,7 @@ $(function() {
 						+ document.documentElement.scrollTop + parseInt(self.getComputedStyle("fontSize"))
 			    };
 			}
+
 			cal.simulator.empty();
 			// clone primary styles to imitate textarea
 			$.each(cal.primaryStyles, function(index, styleName) {
