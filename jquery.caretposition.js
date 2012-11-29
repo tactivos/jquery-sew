@@ -61,7 +61,7 @@ $(function() {
 				'height': self.height()
 			}, cal.specificStyle));
 
-			var value = self.val(), cursorPosition = self.getCursorPosition();
+			var value = (self.val() || self.text()), cursorPosition = self.getCursorPosition();
 			var beforeText = value.substring(0, cursorPosition),
 				afterText = value.substring(cursorPosition);
 
@@ -82,6 +82,38 @@ $(function() {
 	};
 
 	$.fn.extend({
+		setCursorPosition : function(position){
+	    if(this.length == 0) return this;
+	    return $(this).setSelection(position, position);
+		},
+		setSelection: function(selectionStart, selectionEnd) {
+	    if(this.length == 0) return this;
+	    input = this[0];
+
+	    if (input.createTextRange) {
+	        var range = input.createTextRange();
+	        range.collapse(true);
+	        range.moveEnd('character', selectionEnd);
+	        range.moveStart('character', selectionStart);
+	        range.select();
+	    } else if (input.setSelectionRange) {
+	        input.focus();
+	        input.setSelectionRange(selectionStart, selectionEnd);
+	    } else {
+	    	var el = this.get(0);
+
+				var range = document.createRange();
+				range.collapse(true);
+				range.setStart(el.childNodes[0], selectionStart);
+				range.setEnd(el.childNodes[0], selectionEnd);
+
+				var sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+	    }
+
+	    return this;
+		},
 		getComputedStyle: function(styleName) {
 			if (this.length == 0) return;
 			var thiz = this[0];
@@ -108,32 +140,33 @@ $(function() {
 			}
 		},
 		getCursorPosition : function() {
-	        var thiz = this[0], result = 0;
-	        if ('selectionStart' in thiz) {
-	            result = thiz.selectionStart;
-	        } else if('selection' in document) {
-	        	var range = document.selection.createRange();
-	        	if (parseInt($.browser.version) > 6) {
-		            thiz.focus();
-		            var length = document.selection.createRange().text.length;
-		            range.moveStart('character', - thiz.value.length);
-		            result = range.text.length - length;
-	        	} else {
-	                var bodyRange = document.body.createTextRange();
-	                bodyRange.moveToElementText(thiz);
-	                for (; bodyRange.compareEndPoints("StartToStart", range) < 0; result++)
-	                	bodyRange.moveStart('character', 1);
-	                for (var i = 0; i <= result; i ++){
-	                    if (thiz.value.charAt(i) == '\n')
-	                        result++;
-	                }
-	                var enterCount = thiz.value.split('\n').length - 1;
-					result -= enterCount;
-                    return result;
-	        	}
-	        }
-	        return result;
-	    },
+			var element = input = this[0];
+			var value = (input.value || input.innerText)
+
+		  if (document.selection) {
+		      input.focus();
+		      var sel = document.selection.createRange();
+		      var selLen = document.selection.createRange().text.length;
+		      sel.moveStart('character', -value.length);
+		      return sel.text.length - selLen;
+		  } else if (input.selectionStart || input.selectionStart == '0') {
+		  	return input.selectionStart;
+		  } else if (typeof window.getSelection != "undefined") {
+		      var range = window.getSelection().getRangeAt(0);
+		      var preCaretRange = range.cloneRange();
+		      preCaretRange.selectNodeContents(element);
+		      preCaretRange.setEnd(range.endContainer, range.endOffset);
+		      return preCaretRange.toString().length;
+		  } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+		      var textRange = document.selection.createRange();
+		      var preCaretTextRange = document.body.createTextRange();
+		      preCaretTextRange.moveToElementText(element);
+		      preCaretTextRange.setEndPoint("EndToEnd", textRange);
+		      return preCaretTextRange.text.length;
+		  }
+
+		  return 0;
+	  },
 		getCaretPosition: calculator.getCaretPosition
 	});
 });

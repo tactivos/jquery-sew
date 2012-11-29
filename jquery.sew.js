@@ -45,7 +45,11 @@
 	Plugin.prototype.init = function () {
 		if(this.options.values.length < 1) return;
 
-		this.$element.bind('keyup', this.onKeyUp.bind(this)).bind('keydown', this.onKeyDown.bind(this)).bind('focus', this.renderElements.bind(this, this.options.values)).bind('blur', this.remove.bind(this));
+		this.$element
+									.bind('keyup', this.onKeyUp.bind(this))
+									.bind('keydown', this.onKeyDown.bind(this))
+									.bind('focus', this.renderElements.bind(this, this.options.values))
+									.bind('blur', this.remove.bind(this));
 	};
 
 	Plugin.prototype.reset = function () {
@@ -84,10 +88,10 @@
 	};
 
 	Plugin.prototype.replace = function (replacement) {
-		var startpos = this.getSelectionStart();
+		var startpos = this.$element.getCursorPosition();
 		var separator = startpos === 1 ? '' : ' ';
 
-		var fullStuff = this.$element.val();
+		var fullStuff = this.getText();
 		var val = fullStuff.substring(0, startpos);
 		val = val.replace(this.expression, separator + this.options.token + replacement);
 
@@ -95,8 +99,8 @@
 		var separator2 = posfix.match(/^\s/) ? '' : ' ';
 
 		var finalFight = val + separator2 + posfix;
-		this.$element.val(finalFight);
-		this.setCursorPosition(val.length + 1);
+		this.setText(finalFight);
+		this.$element.setCursorPosition(val.length + 1);
 	};
 
 	Plugin.prototype.hightlightItem = function () {
@@ -162,35 +166,6 @@
 		}
 	};
 
-	Plugin.prototype.getSelectionStart = function () {
-		input = this.$element[0];
-
-		var pos = input.value.length;
-
-		if(typeof (input.selectionStart) != "undefined") {
-			pos = input.selectionStart;
-		} else if(input.createTextRange) {
-			var r = document.selection.createRange().duplicate();
-			r.moveEnd('character', input.value.length);
-			if(r.text === '') pos = input.value.length;
-			pos = input.value.lastIndexOf(r.text);
-		}
-
-		return pos;
-	};
-
-	Plugin.prototype.setCursorPosition = function (pos) {
-		if(this.$element.get(0).setSelectionRange) {
-			this.$element.get(0).setSelectionRange(pos, pos);
-		} else if(this.$element.get(0).createTextRange) {
-			var range = this.$element.get(0).createTextRange();
-			range.collapse(true);
-			range.moveEnd('character', pos);
-			range.moveStart('character', pos);
-			range.select();
-		}
-	};
-
 	Plugin.getUniqueElements = function (elements) {
 		var target = [];
 
@@ -200,13 +175,26 @@
 			target.push(e);
 		});
 
-
 		return target;
 	};
 
+	Plugin.prototype.getText = function () {
+		return(this.$element.val() || this.$element.text());
+	};
+
+	Plugin.prototype.setText = function (text) {
+		if(this.$element.prop('tagName').match(/input|textarea/i)) {
+			this.$element.val(text);
+		} else {
+			// poors man sanitization
+			text = $("<span>").text(text).html().replace(/\s/g, '&nbsp');
+			this.$element.html(text);
+		};
+	};
+
 	Plugin.prototype.onKeyUp = function (e) {
-		var startpos = this.getSelectionStart();
-		var val = this.$element.val().substring(0, startpos);
+		var startpos = this.$element.getCursorPosition();
+		var val = this.getText().substring(0, startpos);
 		var matches = val.match(this.expression);
 
 		if(!matches && this.matched) {
