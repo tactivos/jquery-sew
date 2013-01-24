@@ -144,29 +144,41 @@ $(function() {
 			var element = input = this[0];
 			var value = (input.value || input.innerText)
 
+		    if(!this.data("lastCursorPosition")){
+		    	this.data("lastCursorPosition",0);
+		    }
+
+		    var lastCursorPosition = this.data("lastCursorPosition");
+
 		  if (document.selection) {
-		      input.focus();
+		     input.focus();
 		      var sel = document.selection.createRange();
 		      var selLen = document.selection.createRange().text.length;
 		      sel.moveStart('character', -value.length);
-		      return sel.text.length - selLen;
+		      lastCursorPosition = sel.text.length - selLen;
 		  } else if (input.selectionStart || input.selectionStart == '0') {
 		  	return input.selectionStart;
-		  } else if (typeof window.getSelection != "undefined") {
-		      var range = window.getSelection().getRangeAt(0);
+		  } else if (typeof window.getSelection != "undefined" && window.getSelection().rangeCount>0) {
+		  	  try{
+		  	  var selection = window.getSelection();
+		      var range = selection.getRangeAt(0);
 		      var preCaretRange = range.cloneRange();
 		      preCaretRange.selectNodeContents(element);
 		      preCaretRange.setEnd(range.endContainer, range.endOffset);
-		      return preCaretRange.toString().length;
+		      lastCursorPosition =  preCaretRange.toString().length;
+		  	}catch(e){
+		  		lastCursorPosition = this.data("lastCursorPosition");	
+		  	}
 		  } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
 		      var textRange = document.selection.createRange();
 		      var preCaretTextRange = document.body.createTextRange();
 		      preCaretTextRange.moveToElementText(element);
 		      preCaretTextRange.setEndPoint("EndToEnd", textRange);
-		      return preCaretTextRange.text.length;
+		      lastCursorPosition =  preCaretTextRange.text.length;
 		  }
 
-		  return 0;
+    		this.data("lastCursorPosition",lastCursorPosition);
+		  return lastCursorPosition;
 	  },
 		getCaretPosition: calculator.getCaretPosition
 	});
