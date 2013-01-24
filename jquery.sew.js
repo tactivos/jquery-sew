@@ -47,10 +47,10 @@
 		if(this.options.values.length < 1) return;
 
 		this.$element
-									.bind('keyup', this.onKeyUp.bind(this))
-									.bind('keydown', this.onKeyDown.bind(this))
-									.bind('focus', this.renderElements.bind(this, this.options.values))
-									.bind('blur', this.remove.bind(this));
+									.bind('keyup', $.proxy(this.onKeyUp, this))
+									.bind('keydown', $.proxy(this.onKeyDown, this))
+									.bind('focus', $.proxy(this.renderElements, this, this.options.values))
+									.bind('blur', $.proxy(this.remove, this));
 	};
 
 	Plugin.prototype.reset = function () {
@@ -83,9 +83,9 @@
 	Plugin.prototype.remove = function () {
 		this.$itemList.fadeOut('slow');
 
-		this.cleanupHandle = window.setTimeout(function () {
+		this.cleanupHandle = window.setTimeout($.proxy(function () {
 			this.$itemList.remove();
-		}.bind(this), 1000);
+		}, this), 1000);
 	};
 
 	Plugin.prototype.replace = function (replacement) {
@@ -118,13 +118,13 @@
 		$("body").append(this.$itemList);
 
 		var container = this.$itemList.find('ul').empty();
-		values.forEach(function (e, i) {
+		values.forEach($.proxy(function (e, i) {
 			var $item = $(Plugin.ITEM_TEMPLATE);
 
 			this.options.elementFactory($item, e);
 
-			e.element = $item.appendTo(container).bind('click', this.onItemClick.bind(this, e)).bind('mouseover', this.onItemHover.bind(this, i));
-		}.bind(this));
+			e.element = $item.appendTo(container).bind('click', $.proxy(this.onItemClick, this, e)).bind('mouseover', $.proxy(this.onItemHover, this, i));
+		}, this));
 
 		this.index = 0;
 		this.hightlightItem();
@@ -157,7 +157,7 @@
 		var values = this.options.values;
 
 
-		var vals = this.filtered = values.filter(function (e) {
+		var vals = this.filtered = values.filter($.proxy(function (e) {
 			var exp = new RegExp('\\W*' + this.options.token + e.val + '(\\W|$)');
 			if(!this.options.repeat && this.getText().match(exp)) {
 				return false;
@@ -166,7 +166,7 @@
 			return	val === "" ||
 							e.val.toLowerCase().indexOf(val.toLowerCase()) >= 0 ||
 							(e.meta || "").toLowerCase().indexOf(val.toLowerCase()) >= 0;
-		}.bind(this));
+		}, this));
 
 		if(vals.length) {
 			this.renderElements(vals);
