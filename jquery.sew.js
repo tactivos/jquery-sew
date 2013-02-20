@@ -78,6 +78,7 @@
 	Plugin.prototype.select = function () {
 		this.replace(this.filtered[this.index].val);
 		this.hideList();
+		this.$element.trigger('mention-selected',this.filtered);
 	};
 
 	Plugin.prototype.remove = function () {
