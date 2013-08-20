@@ -11,7 +11,6 @@
 	};
 
 	var pluginName = 'sew',
-		document = window.document,
 		defaults = {
 			token: '@',
 			elementFactory: elementFactory,
@@ -31,7 +30,7 @@
 		this._defaults = defaults;
 		this._name = pluginName;
 
-		this.expression = new RegExp('(?:^|\\b|\\s)' + this.options.token + '([\\w.]*)$');
+		this.expression = new RegExp('(^|\\b|\\s)' + this.options.token + '([\\w.]*)$');
 		this.cleanupHandle = null;
 
 		this.init();
@@ -90,16 +89,15 @@
 
 	Plugin.prototype.replace = function (replacement) {
 		var startpos = this.$element.getCursorPosition();
-		var separator = startpos === 1 ? '' : ' ';
 
 		var fullStuff = this.getText();
 		var val = fullStuff.substring(0, startpos);
-		val = val.replace(this.expression, separator + this.options.token + replacement);
+		val = val.replace(this.expression, '$1' + this.options.token + replacement);
 
 		var posfix = fullStuff.substring(startpos, fullStuff.length);
-		var separator2 = posfix.match(/^\s/) ? '' : ' ';
+		var separator = posfix.match(/^\s/) ? '' : ' ';
 
-		var finalFight = val + separator2 + posfix;
+		var finalFight = val + separator + posfix;
 		this.setText(finalFight);
 		this.$element.setCursorPosition(val.length + 1);
 	};
@@ -193,11 +191,9 @@
 	};
 
 	Plugin.prototype.setText = function (text) {
-		if(this.$element.prop('tagName').match(/input|textarea/i)) {
+		if(this.$element.is('input,textarea')) {
 			this.$element.val(text);
 		} else {
-			// poors man sanitization
-			text = $("<span>").text(text).html().replace(/\s/g, '&nbsp');
 			this.$element.html(text);
 		}
 	};
@@ -221,7 +217,7 @@
 		}
 
 		if(matches && !this.dontFilter) {
-			this.filterList(matches[1]);
+			this.filterList(matches[2]);
 		}
 	};
 
@@ -230,20 +226,20 @@
 		if(!listVisible || (Plugin.KEYS.indexOf(e.keyCode) < 0)) return;
 
 		switch(e.keyCode) {
-		case 9:
-		case 13:
-			this.select();
-			break;
-		case 40:
-			this.next();
-			break;
-		case 38:
-			this.prev();
-			break;
-		case 27:
-			this.$itemList.hide();
-			this.dontFilter = true;
-			break;
+			case 9:
+			case 13:
+				this.select();
+				break;
+			case 40:
+				this.next();
+				break;
+			case 38:
+				this.prev();
+				break;
+			case 27:
+				this.$itemList.hide();
+				this.dontFilter = true;
+				break;
 		}
 
 		e.preventDefault();
