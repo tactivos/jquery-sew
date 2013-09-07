@@ -14,7 +14,7 @@ $(function() {
 			'borderLeftColor', 'borderTopColor', 'borderBottomColor', 'borderRightColor',
 			'borderLeftStyle', 'borderTopStyle', 'borderBottomStyle', 'borderRightStyle',
 			'borderLeftWidth', 'borderTopWidth', 'borderBottomWidth', 'borderRightWidth',
-			'line-height', 'outline'],
+			'line-height', 'outline', 'text-align'],
 
 		specificStyle: {
 			'word-wrap': 'break-word',
